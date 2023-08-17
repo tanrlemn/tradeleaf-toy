@@ -9,6 +9,7 @@ import logo from '@/public/logo.svg';
 // components
 import { HStack, Heading, Text } from '@chakra-ui/react';
 import Image from 'next/image';
+import SettingsDrawer from '../_components/settingsDrawer';
 
 export default function Navbar() {
   return (
@@ -30,14 +31,16 @@ export default function Navbar() {
           ivyFoundation
         </Heading>
       </HStack>
-      <Heading
-        as='h2'
-        fontSize={{ base: '0', md: '1.4rem' }}
-        display={{ base: 'none', md: 'block' }}
-        fontWeight='600'>
-        impactCalculator
-      </Heading>
-      <Text>toyVersion 1.0</Text>
+      <HStack>
+        <Heading
+          as='h2'
+          fontSize={{ base: '0', md: '1.4rem' }}
+          display={{ base: 'none', md: 'block' }}
+          fontWeight='600'>
+          impactCalculator
+        </Heading>
+        <Text>toyVersion 1.0</Text>
+      </HStack>
     </HStack>
   );
 }

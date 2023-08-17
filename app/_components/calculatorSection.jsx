@@ -41,17 +41,41 @@ export default function CalculatorSection({
   calculate,
 }) {
   const [sliderValue, setSliderValue] = useState(0);
+  const [transactionAmount, setTransactionAmount] = useState(0);
+  const [numberTransactions, setNumberTransactions] = useState(0);
 
   useEffect(() => {
-    if (items !== null && sliderValue === 0) {
-      items.find((item) => {
-        item.input === 'slider' && setSliderValue(calculator[item.name]);
-      });
+    if (items !== null) {
+      if (sliderValue === 0) {
+        items.find((item) => {
+          item.name === 'percentTransactions' &&
+            setSliderValue(calculator[item.name]);
+        });
+      } else if (transactionAmount === 0) {
+        items.find((item) => {
+          item.name === 'averageTransactionAmount' &&
+            setTransactionAmount(calculator[item.name]);
+        });
+      } else if (numberTransactions === 0) {
+        items.find((item) => {
+          item.name === 'numberTransactions' &&
+            setNumberTransactions(calculator[item.name]);
+        });
+      }
     }
     if (calculate) {
       setSliderValue(calculator.percentTransactions);
+      setTransactionAmount(calculator.averageTransactionAmount);
+      setNumberTransactions(calculator.numberTransactions);
     }
-  }, [calculator, items, sliderValue, calculate]);
+  }, [
+    calculator,
+    items,
+    sliderValue,
+    calculate,
+    transactionAmount,
+    numberTransactions,
+  ]);
 
   return (
     <VStack
@@ -60,8 +84,8 @@ export default function CalculatorSection({
           setCalculator(defaultCalculator);
           setCalculate(true);
           setSliderValue(defaultCalculator.percentTransactions);
-          console.log(defaultCalculator);
-          console.log(sliderValue);
+          setNumberTransactions(defaultCalculator.numberTransactions);
+          setTransactionAmount(defaultCalculator.averageTransactionAmount);
         }
       }}
       flex={1}
@@ -112,6 +136,31 @@ export default function CalculatorSection({
           minH='100%'
           justify='flex-start'>
           {items.map((item, index) => {
+            const value = {
+              value:
+                item.name === 'numberTransactions'
+                  ? numberTransactions
+                  : item.name === 'averageTransactionAmount'
+                  ? transactionAmount
+                  : item.name === 'percentTransactions'
+                  ? sliderValue
+                  : null,
+              setValue:
+                item.name === 'numberTransactions'
+                  ? setNumberTransactions
+                  : item.name === 'averageTransactionAmount'
+                  ? setTransactionAmount
+                  : item.name === 'percentTransactions'
+                  ? setSliderValue
+                  : null,
+            };
+            const format = (val) => {
+              if (item.format === 'percent') return `${val}%`;
+              if (item.format === 'currency') return `$${val}`;
+              if (item.format === 'number')
+                return new Intl.NumberFormat().format(val);
+            };
+
             return (
               <Box
                 flex={1}
@@ -133,29 +182,8 @@ export default function CalculatorSection({
                     fontSize='lg'>
                     {item.label}
                   </Text>
-                  {item.input === 'number' && (
-                    <NumberInput
-                      size={{ base: 'sm', md: 'md' }}
-                      onChange={(val) => {
-                        setCalculator({
-                          ...calculator,
-                          [item.name]: Number(val),
-                        });
-                        setCalculate(true);
-                      }}
-                      defaultValue={calculator[item.name]}
-                      min={item.min}
-                      max={
-                        item.max !== null ? item.max : Number.MAX_SAFE_INTEGER
-                      }>
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                  )}
-                  {item.input === 'slider' && (
+
+                  {item.input !== null && (
                     <Box>
                       <NumberInput
                         size={{ base: 'sm', md: 'md' }}
@@ -164,9 +192,9 @@ export default function CalculatorSection({
                         onChange={(val) => {
                           setCalculator({ ...calculator, [item.name]: val });
                           setCalculate(true);
-                          setSliderValue(val);
+                          value.setValue(val);
                         }}
-                        value={`${sliderValue}%`}
+                        value={format(value.value)}
                         defaultValue={calculator[item.name]}
                         min={item.min}
                         max={
@@ -179,15 +207,17 @@ export default function CalculatorSection({
                         </NumberInputStepper>
                       </NumberInput>
                       <Slider
+                        min={item.min}
+                        max={item.max !== null ? item.max : 100}
                         focusThumbOnChange={false}
-                        value={sliderValue}
+                        value={value.value}
                         minW='100%'
-                        step={0.1}
-                        onChange={(val) => setSliderValue(val)}
+                        step={item.step}
+                        onChange={(val) => value.setValue(val)}
                         onChangeEnd={(val) => {
                           setCalculator({ ...calculator, [item.name]: val });
                           setCalculate(true);
-                          setSliderValue(val);
+                          value.setValue(val);
                         }}
                         aria-label={item.name}
                         defaultValue={calculator[item.name]}>

@@ -7,18 +7,19 @@ import styles from './calculator.module.css';
 import { useState, useEffect, useMemo } from 'react';
 
 // components
-import { Flex, Grid, GridItem } from '@chakra-ui/react';
+import { Flex, Grid, GridItem, HStack } from '@chakra-ui/react';
 import CalculatorSection from './calculatorSection';
+import SettingsDrawer from './settingsDrawer';
 
 export default function Calculator() {
   const defaultCalculator = useMemo(
     () => ({
       businesses: 1,
       percentTransactions: 2.1,
-      averageTransactionAmount: 13.65,
-      numberTransactions: 172903,
+      averageTransactionAmount: 19,
+      numberTransactions: 1000,
       totalSpent: 0,
-      activeUsers: 9092,
+      activeUsers: 40,
       cityDollarsDispersed: 0,
       cityDollarsSpent: 0,
       percentReinvested: 0,
@@ -58,6 +59,8 @@ export default function Calculator() {
         );
       }
 
+      console.log(calculator);
+
       const percentTransactions = calculator.percentTransactions / 100;
       const averageTransactionAmount = calculator.averageTransactionAmount;
       const numberTransactions = calculator.numberTransactions;
@@ -65,9 +68,10 @@ export default function Calculator() {
       const activeUsers = calculator.activeUsers;
       const cityDollarsDispersed = totalSpent * percentTransactions;
       const cityDollarsSpent = cityDollarsDispersed;
+
       const percentReinvested = (cityDollarsDispersed / totalSpent) * 100;
       const amountEarnedPerUser = cityDollarsDispersed / activeUsers;
-      const residualCityDollars = cityDollarsSpent - amountEarnedPerUser;
+      const residualCityDollars = cityDollarsSpent * percentTransactions;
 
       setCalculator({
         ...calculator,
@@ -93,6 +97,7 @@ export default function Calculator() {
             ? mFormatter(residualCityDollars)
             : formattedCurrency(residualCityDollars),
       });
+      console.log(calculator);
       localStorage.setItem('calculator', JSON.stringify(calculator));
     };
 
@@ -135,6 +140,7 @@ export default function Calculator() {
                   input: 'slider',
                   min: 0,
                   max: 100,
+                  step: 0.01,
                   name: 'percentTransactions',
                   format: 'percent',
                   label: 'percent of transactions',
@@ -143,7 +149,8 @@ export default function Calculator() {
                   value: calculator.averageTransactionAmount,
                   input: 'number',
                   min: 0,
-                  max: null,
+                  max: 100,
+                  step: 0.01,
                   name: 'averageTransactionAmount',
                   format: 'currency',
                   label: 'average transaction amount',
@@ -152,7 +159,8 @@ export default function Calculator() {
                   value: calculator.numberTransactions,
                   input: 'number',
                   min: 0,
-                  max: null,
+                  max: 1000000,
+                  step: 100,
                   name: 'numberTransactions',
                   format: 'number',
                   label: 'number of transactions',
@@ -268,6 +276,13 @@ export default function Calculator() {
               horizontal={true}
             />
           </GridItem>
+          <SettingsDrawer
+            setCalculator={setCalculator}
+            calculator={calculator}
+            setCalculate={setCalculate}
+            calculate={calculate}
+            defaultCalculator={defaultCalculator}
+          />
         </Grid>
       )}
     </Flex>
