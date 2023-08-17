@@ -69,6 +69,7 @@ export default function CalculatorSection({
       gap={0}>
       <VStack
         flex={reset && 1}
+        gap={{ base: '0', md: '' }}
         align='center'
         justify='center'
         style={{ cursor: reset ? 'pointer' : 'default' }}
@@ -76,6 +77,7 @@ export default function CalculatorSection({
         w='100%'
         _hover={reset ? { bg: 'var(--gray-dark-alt)' } : ''}
         bg={bgColor}
+        pt={{ base: reset ? '1rem' : '0', md: '' }}
         className={styles.itemTitleWrap}>
         {reset && (
           <Image
@@ -88,13 +90,14 @@ export default function CalculatorSection({
         )}
         <Text
           borderRight='1px solid var(--gray-mid)'
-          borderBottom={reset ? '' : '1px solid var(--gray-mid)'}
+          borderBottom={reset ? '' : '0.5px solid var(--gray-mid)'}
+          border={reset ? '' : '1px solid var(--gray-mid)'}
           w='100%'
           color={reset ? 'var(--gray-light)' : 'var(--black-blue-alt)'}
-          fontSize='xs'
+          size={{ sm: 'xs', md: 'xs' }}
           textAlign='center'
           as='b'
-          p='2'
+          p={{ base: '2', md: '2' }}
           className={styles.itemTitle}>
           {label}
         </Text>
@@ -112,14 +115,18 @@ export default function CalculatorSection({
             return (
               <Box
                 flex={1}
-                flexBasis={horizontal ? '100%' : 0}
-                minW={horizontal ? 0 : '100%'}
-                minH={horizontal ? '100%' : '13rem'}
+                minW={{ md: horizontal ? 0 : '100%' }}
+                minH={{
+                  sm: 'fit-content',
+                  md: '',
+                  lg: horizontal ? '100%' : '13rem',
+                }}
                 bg={item.itemBgColor}
                 key={index}
                 className={styles.itemWrap}>
-                <Box maxW='11rem'>
+                <Box maxW={{ base: '', md: '11rem' }}>
                   <Text
+                    className={styles.itemLabel}
                     lineHeight={1.2}
                     textAlign='center'
                     mb='0.5rem'
@@ -128,6 +135,7 @@ export default function CalculatorSection({
                   </Text>
                   {item.input === 'number' && (
                     <NumberInput
+                      size={{ base: 'sm', md: 'md' }}
                       onChange={(val) => {
                         setCalculator({
                           ...calculator,
@@ -150,6 +158,7 @@ export default function CalculatorSection({
                   {item.input === 'slider' && (
                     <Box>
                       <NumberInput
+                        size={{ base: 'sm', md: 'md' }}
                         keepWithinRange={false}
                         clampValueOnBlur={false}
                         onChange={(val) => {
@@ -192,7 +201,7 @@ export default function CalculatorSection({
                   {item.input === null && (
                     <Box>
                       <Heading
-                        fontSize='1.7rem'
+                        fontSize={{ base: '1.3rem', md: '1.7rem' }}
                         value={calculator[item.name]}
                         textAlign='center'>
                         {`${calculator[item.name]}${

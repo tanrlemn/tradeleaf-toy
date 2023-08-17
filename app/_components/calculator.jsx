@@ -118,13 +118,15 @@ export default function Calculator() {
       {calculator !== null && (
         <Grid
           h='100%'
+          maxH={{ sm: '', md: '91vh', lg: '100%' }}
           w='100%'
-          templateRows='35px repeat(3, 1fr)'
-          templateColumns='repeat(8, 1fr)'>
+          maxW='100vw'
+          templateRows={{ sm: 'repeat(4, 1fr)', lg: '35px repeat(3, 1fr)' }}
+          templateColumns={{ sm: 'repeat(2, 1fr)', lg: 'repeat(8, 1fr)' }}>
           <GridItem
             minH='100%'
-            rowSpan={4}
-            colSpan={3}>
+            rowSpan={{ sm: 1, md: 3, lg: 4 }}
+            colSpan={{ sm: 2, md: 1, lg: 3 }}>
             <CalculatorSection
               label='tradeLeaf'
               items={[
@@ -165,8 +167,8 @@ export default function Calculator() {
           </GridItem>
           <GridItem
             minH='100%'
-            colSpan={2}
-            rowSpan={2}>
+            colSpan={{ md: 1, lg: 2 }}
+            rowSpan={{ md: 1, lg: 2 }}>
             <CalculatorSection
               label='theCommunity'
               items={[
@@ -188,8 +190,8 @@ export default function Calculator() {
           </GridItem>
           <GridItem
             minH='100%'
-            colSpan={2}
-            rowSpan={2}>
+            colSpan={{ md: 1, lg: 2 }}
+            rowSpan={{ md: 1, lg: 2 }}>
             <CalculatorSection
               label='theCommunity'
               items={[
@@ -211,8 +213,8 @@ export default function Calculator() {
           </GridItem>
           <GridItem
             minH='100%'
-            colSpan={1}
-            rowSpan={2}>
+            colSpan={{ sm: 2, md: 1, lg: 1 }}
+            rowSpan={{ md: 1, lg: 2 }}>
             <CalculatorSection
               label='reset'
               items={null}
@@ -228,8 +230,8 @@ export default function Calculator() {
 
           <GridItem
             minH='100%'
-            colSpan={5}
-            rowSpan={2}>
+            colSpan={{ sm: 2, md: 2, lg: 5 }}
+            rowSpan={{ md: 1, lg: 2 }}>
             <CalculatorSection
               label='impactLevel'
               items={[

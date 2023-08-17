@@ -1,9 +1,10 @@
 import './globals.css';
-import { Inter } from 'next/font/google';
+import { Manrope } from 'next/font/google';
 
-const inter = Inter({ subsets: ['latin'] });
+const manrope = Manrope({ subsets: ['latin'] });
 
 import ChakraLayoutProvider from './styles/ChakraProvider';
+import Navbar from './navigation/navbar';
 
 export const metadata = {
   title: 'tradeLeaf toy',
@@ -13,8 +14,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang='en'>
-      <body className={inter.className}>
-        <ChakraLayoutProvider>{children}</ChakraLayoutProvider>
+      <body className={manrope.className}>
+        <ChakraLayoutProvider>
+          <Navbar />
+          {children}
+        </ChakraLayoutProvider>
       </body>
     </html>
   );

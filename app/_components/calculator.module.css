@@ -4,10 +4,10 @@
   box-sizing: border-box;
   overflow: hidden;
 
-  position: absolute;
-  bottom: 0;
+  position: relative;
+  top: 0;
   left: 0;
-  border-top: 1px solid var(--gray-mid);
+  border: 1px solid var(--gray-mid);
 }
 
 .itemTitle {
@@ -31,7 +31,33 @@
   justify-content: center;
   align-items: center;
   flex-flow: column nowrap;
-  border-right: 1px solid var(--gray-mid);
-  border-bottom: 1px solid var(--gray-mid);
+  border: 1px solid var(--gray-mid);
   padding: 2rem;
+}
+
+@media screen and (max-width: 62em) {
+  .calculator {
+    max-width: 100vw;
+  }
+  .itemsWrap {
+    max-width: 100vw;
+  }
+  .itemWrap {
+    padding: 1rem;
+    max-width: 100vw;
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 48em) {
+  .itemTitle {
+    font-size: 0.8rem;
+  }
+
+  .itemLabel {
+    font-size: 0.9rem !important;
+  }
+  .itemWrap {
+    padding: 0.5rem;
+  }
 }
