@@ -30,33 +30,21 @@ export default function AdditionalSettings({
   setCalculate,
   calculate,
 }) {
-  const [businesses, setBusinesses] = useState(0);
-  const [activeUsers, setActiveUsers] = useState(0);
-  const [cityDollarsSpent, setCityDollarsSpent] = useState(0);
+  const [targetReward, setTargetReward] = useState(0);
 
   useEffect(() => {
     if (items !== null) {
-      if (businesses === 0) {
+      if (targetReward === 0) {
         items.find((item) => {
-          item.name === 'businesses' && setBusinesses(calculator[item.name]);
-        });
-      } else if (activeUsers === 0) {
-        items.find((item) => {
-          item.name === 'activeUsers' && setActiveUsers(calculator[item.name]);
-        });
-      } else if (cityDollarsSpent === 0) {
-        items.find((item) => {
-          item.name === 'cityDollarsSpent' &&
-            setCityDollarsSpent(calculator[item.name]);
+          item.name === 'targetReward' &&
+            setTargetReward(calculator[item.name]);
         });
       }
     }
     if (calculate) {
-      setBusinesses(calculator.businesses);
-      setActiveUsers(calculator.activeUsers);
-      setCityDollarsSpent(calculator.cityDollarsSpent);
+      setTargetReward(calculator.targetReward);
     }
-  }, [calculator, items, businesses, calculate, activeUsers, cityDollarsSpent]);
+  }, [calculator, items, calculate, targetReward]);
 
   return (
     <VStack
@@ -71,22 +59,8 @@ export default function AdditionalSettings({
           justify='flex-start'>
           {items.map((item, index) => {
             const value = {
-              value:
-                item.name === 'cityDollarsSpent'
-                  ? cityDollarsSpent
-                  : item.name === 'activeUsers'
-                  ? activeUsers
-                  : item.name === 'businesses'
-                  ? businesses
-                  : null,
-              setValue:
-                item.name === 'cityDollarsSpent'
-                  ? setCityDollarsSpent
-                  : item.name === 'activeUsers'
-                  ? setActiveUsers
-                  : item.name === 'businesses'
-                  ? setBusinesses
-                  : null,
+              value: item.name === 'targetReward' ? targetReward : null,
+              setValue: item.name === 'targetReward' ? setTargetReward : null,
             };
             const formatVal = (val) => {
               if (item.format === 'percent') return `${val}%`;
@@ -117,6 +91,7 @@ export default function AdditionalSettings({
                         keepWithinRange={false}
                         clampValueOnBlur={false}
                         onChange={(val) => {
+                          console.log(val);
                           setCalculator({ ...calculator, [item.name]: val });
                           setCalculate(true);
                           value.setValue(val);

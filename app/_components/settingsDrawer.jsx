@@ -56,20 +56,11 @@ export default function SettingsDrawer({
                 {
                   input: 'number',
                   min: 0,
-                  max: 10000,
-                  step: 1,
-                  name: 'businesses',
-                  format: 'number',
-                  label: 'number of businesses',
-                },
-                {
-                  input: 'number',
-                  min: 0,
-                  max: 1000000000,
+                  max: 1000000,
                   step: 10,
-                  name: 'activeUsers',
+                  name: 'targetReward',
                   format: 'number',
-                  label: 'number of active users',
+                  label: 'target reward for each user each month',
                 },
               ]}
               calculator={calculator}
