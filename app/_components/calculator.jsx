@@ -7,19 +7,18 @@ import styles from './calculator.module.css';
 import { useState, useEffect, useMemo } from 'react';
 
 // components
-import { Flex, Grid, GridItem, HStack } from '@chakra-ui/react';
+import { Flex, Grid, GridItem } from '@chakra-ui/react';
 import CalculatorSection from './calculatorSection';
-import SettingsDrawer from './settingsDrawer';
 
 export default function Calculator() {
   const defaultCalculator = useMemo(
     () => ({
       businesses: 1,
       percentTransactions: 2.1,
-      averageTransactionAmount: 19,
-      numberTransactions: 1000,
+      monthlyRevenue: 19000,
       totalSpent: 0,
-      activeUsers: 40,
+      activeUsers: 10,
+      targetReward: 100,
       cityDollarsDispersed: 0,
       cityDollarsSpent: 0,
       percentReinvested: 0,
@@ -39,6 +38,23 @@ export default function Calculator() {
   const [calculate, setCalculate] = useState(false);
 
   useEffect(() => {
+    const setActiveUsers = (
+      monthlyRevenue,
+      percentTransactions,
+      targetReward
+    ) => {
+      const activeUsers =
+        (Number(monthlyRevenue) * Number(percentTransactions)) /
+        Number(targetReward);
+
+      setCalculator({
+        ...calculator,
+        activeUsers: Math.floor(Number(activeUsers)),
+      });
+
+      return Math.floor(Number(activeUsers));
+    };
+
     const makeCalculations = () => {
       const formattedCurrency = (number) => {
         return new Intl.NumberFormat('en-US', {
@@ -59,45 +75,30 @@ export default function Calculator() {
         );
       }
 
-      console.log(calculator);
-
       const percentTransactions = calculator.percentTransactions / 100;
-      const averageTransactionAmount = calculator.averageTransactionAmount;
-      const numberTransactions = calculator.numberTransactions;
-      const totalSpent = averageTransactionAmount * numberTransactions;
-      const activeUsers = calculator.activeUsers;
+      const monthlyRevenue = calculator.monthlyRevenue;
+      const totalSpent = Number(monthlyRevenue);
+      const activeUsers = setActiveUsers(
+        Number(totalSpent),
+        Number(percentTransactions),
+        Number(calculator.targetReward)
+      );
       const cityDollarsDispersed = totalSpent * percentTransactions;
       const cityDollarsSpent = cityDollarsDispersed;
 
       const percentReinvested = (cityDollarsDispersed / totalSpent) * 100;
-      const amountEarnedPerUser = cityDollarsDispersed / activeUsers;
       const residualCityDollars = cityDollarsSpent * percentTransactions;
 
       setCalculator({
         ...calculator,
-        totalSpent:
-          totalSpent > 999999
-            ? mFormatter(totalSpent)
-            : formattedCurrency(totalSpent),
-        cityDollarsDispersed:
-          cityDollarsDispersed > 999999
-            ? mFormatter(cityDollarsDispersed)
-            : formattedCurrency(cityDollarsDispersed),
-        cityDollarsSpent:
-          cityDollarsSpent > 999999
-            ? mFormatter(cityDollarsSpent)
-            : formattedCurrency(cityDollarsSpent),
-        percentReinvested: formattedNumber(percentReinvested),
-        amountEarnedPerUser:
-          amountEarnedPerUser > 999999
-            ? mFormatter(amountEarnedPerUser)
-            : formattedCurrency(amountEarnedPerUser),
-        residualCityDollars:
-          residualCityDollars > 999999
-            ? mFormatter(residualCityDollars)
-            : formattedCurrency(residualCityDollars),
+        totalSpent: totalSpent,
+        cityDollarsDispersed: cityDollarsDispersed,
+        cityDollarsSpent: cityDollarsSpent,
+        monthlyRevenue: monthlyRevenue,
+        percentReinvested: percentReinvested,
+        activeUsers: Number(activeUsers),
+        residualCityDollars: residualCityDollars,
       });
-      console.log(calculator);
       localStorage.setItem('calculator', JSON.stringify(calculator));
     };
 
@@ -143,27 +144,27 @@ export default function Calculator() {
                   step: 0.01,
                   name: 'percentTransactions',
                   format: 'percent',
-                  label: 'percent of transactions',
+                  label: 'percent of revenue donated by business',
                 },
                 {
-                  value: calculator.averageTransactionAmount,
-                  input: 'number',
-                  min: 0,
-                  max: 100,
-                  step: 0.01,
-                  name: 'averageTransactionAmount',
-                  format: 'currency',
-                  label: 'average transaction amount',
-                },
-                {
-                  value: calculator.numberTransactions,
+                  value: calculator.monthlyRevenue,
                   input: 'number',
                   min: 0,
                   max: 1000000,
-                  step: 100,
-                  name: 'numberTransactions',
-                  format: 'number',
-                  label: 'number of transactions',
+                  step: 0.01,
+                  name: 'monthlyRevenue',
+                  format: 'currency',
+                  label: 'average monthly revenue for business',
+                },
+                {
+                  value: calculator.targetReward,
+                  input: 'number',
+                  min: 0,
+                  max: 2500,
+                  step: 10,
+                  name: 'targetReward',
+                  format: 'currency',
+                  label: 'target monthly reward per user',
                 },
               ]}
               bgColor='var(--green)'
@@ -185,7 +186,7 @@ export default function Calculator() {
                   input: null,
                   name: 'totalSpent',
                   format: 'currency',
-                  label: 'total amount spent by users',
+                  label: 'total monthly business revenue generated',
                   itemBgColor: 'var(--orange-50)',
                 },
               ]}
@@ -208,7 +209,7 @@ export default function Calculator() {
                   input: null,
                   name: 'cityDollarsDispersed',
                   format: 'currency',
-                  label: 'cityDollars dispersed',
+                  label: 'city-restricted dollars generated',
                   itemBgColor: 'var(--blue-50)',
                 },
               ]}
@@ -248,15 +249,15 @@ export default function Calculator() {
                   input: null,
                   name: 'percentReinvested',
                   format: 'percent',
-                  label: 'percentage of revenue reinvested in the city',
+                  label: 'percent of revenue reinvested in the city',
                   itemBgColor: 'var(--teal-50)',
                 },
                 {
-                  value: calculator.amountEarnedPerUser,
+                  value: calculator.activeUsers,
                   input: null,
-                  name: 'amountEarnedPerUser',
-                  format: 'currency',
-                  label: 'average amount earned per user',
+                  name: 'activeUsers',
+                  format: 'number',
+                  label: 'maximum number of active users',
                   itemBgColor: 'var(--teal-50)',
                 },
                 {
@@ -276,13 +277,6 @@ export default function Calculator() {
               horizontal={true}
             />
           </GridItem>
-          <SettingsDrawer
-            setCalculator={setCalculator}
-            calculator={calculator}
-            setCalculate={setCalculate}
-            calculate={calculate}
-            defaultCalculator={defaultCalculator}
-          />
         </Grid>
       )}
     </Flex>

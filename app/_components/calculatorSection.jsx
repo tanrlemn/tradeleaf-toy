@@ -41,8 +41,16 @@ export default function CalculatorSection({
   calculate,
 }) {
   const [sliderValue, setSliderValue] = useState(0);
-  const [transactionAmount, setTransactionAmount] = useState(0);
-  const [numberTransactions, setNumberTransactions] = useState(0);
+  const [monthlyRevenue, setMonthlyRevenue] = useState(0);
+  const [targetReward, setTargetReward] = useState(0);
+
+  const format = (item, val) => {
+    if (item.format === 'percent')
+      return `${new Intl.NumberFormat().format(val)}%`;
+    if (item.format === 'currency')
+      return `$${new Intl.NumberFormat().format(val)}`;
+    if (item.format === 'number') return new Intl.NumberFormat().format(val);
+  };
 
   useEffect(() => {
     if (items !== null) {
@@ -51,31 +59,24 @@ export default function CalculatorSection({
           item.name === 'percentTransactions' &&
             setSliderValue(calculator[item.name]);
         });
-      } else if (transactionAmount === 0) {
+      } else if (Number(monthlyRevenue) === 0) {
         items.find((item) => {
-          item.name === 'averageTransactionAmount' &&
-            setTransactionAmount(calculator[item.name]);
+          item.name === 'monthlyRevenue' &&
+            setMonthlyRevenue(calculator[item.name]);
         });
-      } else if (numberTransactions === 0) {
+      } else if (targetReward === 0) {
         items.find((item) => {
-          item.name === 'numberTransactions' &&
-            setNumberTransactions(calculator[item.name]);
+          item.name === 'targetReward' &&
+            setTargetReward(calculator[item.name]);
         });
       }
     }
     if (calculate) {
       setSliderValue(calculator.percentTransactions);
-      setTransactionAmount(calculator.averageTransactionAmount);
-      setNumberTransactions(calculator.numberTransactions);
+      setMonthlyRevenue(calculator.monthlyRevenue);
+      setTargetReward(calculator.targetReward);
     }
-  }, [
-    calculator,
-    items,
-    sliderValue,
-    calculate,
-    transactionAmount,
-    numberTransactions,
-  ]);
+  }, [calculator, items, sliderValue, calculate, monthlyRevenue, targetReward]);
 
   return (
     <VStack
@@ -84,8 +85,8 @@ export default function CalculatorSection({
           setCalculator(defaultCalculator);
           setCalculate(true);
           setSliderValue(defaultCalculator.percentTransactions);
-          setNumberTransactions(defaultCalculator.numberTransactions);
-          setTransactionAmount(defaultCalculator.averageTransactionAmount);
+          setMonthlyRevenue(defaultCalculator.monthlyRevenue);
+          setTargetReward(defaultCalculator.targetReward);
         }
       }}
       flex={1}
@@ -138,27 +139,21 @@ export default function CalculatorSection({
           {items.map((item, index) => {
             const value = {
               value:
-                item.name === 'numberTransactions'
-                  ? numberTransactions
-                  : item.name === 'averageTransactionAmount'
-                  ? transactionAmount
+                item.name === 'monthlyRevenue'
+                  ? monthlyRevenue
                   : item.name === 'percentTransactions'
                   ? sliderValue
+                  : item.name === 'targetReward'
+                  ? targetReward
                   : null,
               setValue:
-                item.name === 'numberTransactions'
-                  ? setNumberTransactions
-                  : item.name === 'averageTransactionAmount'
-                  ? setTransactionAmount
+                item.name === 'monthlyRevenue'
+                  ? setMonthlyRevenue
                   : item.name === 'percentTransactions'
                   ? setSliderValue
+                  : item.name === 'targetReward'
+                  ? setTargetReward
                   : null,
-            };
-            const format = (val) => {
-              if (item.format === 'percent') return `${val}%`;
-              if (item.format === 'currency') return `$${val}`;
-              if (item.format === 'number')
-                return new Intl.NumberFormat().format(val);
             };
 
             return (
@@ -173,7 +168,7 @@ export default function CalculatorSection({
                 bg={item.itemBgColor}
                 key={index}
                 className={styles.itemWrap}>
-                <Box maxW={{ base: '', md: '11rem' }}>
+                <Box maxW={{ base: '', md: '12rem' }}>
                   <Text
                     className={styles.itemLabel}
                     lineHeight={1.2}
@@ -190,11 +185,14 @@ export default function CalculatorSection({
                         keepWithinRange={false}
                         clampValueOnBlur={false}
                         onChange={(val) => {
-                          setCalculator({ ...calculator, [item.name]: val });
+                          setCalculator({
+                            ...calculator,
+                            [item.name]: Number(val),
+                          });
                           setCalculate(true);
-                          value.setValue(val);
+                          value.setValue(Number(val));
                         }}
-                        value={format(value.value)}
+                        value={format(item, value.value)}
                         defaultValue={calculator[item.name]}
                         min={item.min}
                         max={
@@ -213,11 +211,14 @@ export default function CalculatorSection({
                         value={value.value}
                         minW='100%'
                         step={item.step}
-                        onChange={(val) => value.setValue(val)}
+                        onChange={(val) => value.setValue(Number(val))}
                         onChangeEnd={(val) => {
-                          setCalculator({ ...calculator, [item.name]: val });
+                          setCalculator({
+                            ...calculator,
+                            [item.name]: Number(val),
+                          });
                           setCalculate(true);
-                          value.setValue(val);
+                          value.setValue(Number(val));
                         }}
                         aria-label={item.name}
                         defaultValue={calculator[item.name]}>
@@ -234,9 +235,7 @@ export default function CalculatorSection({
                         fontSize={{ base: '1.3rem', md: '1.7rem' }}
                         value={calculator[item.name]}
                         textAlign='center'>
-                        {`${calculator[item.name]}${
-                          item.format === 'percent' ? '%' : ''
-                        }`}
+                        {format(item, calculator[item.name])}
                       </Heading>
                     </Box>
                   )}
